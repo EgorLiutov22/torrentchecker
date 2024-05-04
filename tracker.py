@@ -143,8 +143,8 @@ class Tracker:
             self.raise_for_error(data)
             return TrackerResponse(decode.Decoder(data).decode())
 
-    def close(self):
-        self.http_client.close()
+    async def close(self):
+        await self.http_client.close()
 
     def raise_for_error(self, tracker_response):
         """

@@ -17,12 +17,15 @@ class Parser:
 
 
 async def main(*args):
+    trackers = []
     for f in args:
         client = TorrentClient(Torrent(f))
         task = loop.create_task(client.start())
-        client.get_info()
-        client.stop()
+        peers = await client.get_info()
+        trackers.append(peers)
+        await client.stop()
         task.cancel()
+    print(trackers)
 
 
 if __name__ == '__main__':

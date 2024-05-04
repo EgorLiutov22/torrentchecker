@@ -43,10 +43,11 @@ class TorrentClient:
         self.piece_manager = PieceManager(torrent)
         self.abort = False
 
-    def get_info(self):
+    async def get_info(self):
 
-        print({self.tracker.get_url(): self.available_peers.qsize()})
-        self.tracker.close()
+        res = {self.tracker.get_url(): self.available_peers.qsize()}
+        await self.tracker.close()
+        return res
 
     async def start(self):
         """
@@ -97,7 +98,7 @@ class TorrentClient:
         while not self.available_peers.empty():
             self.available_peers.get_nowait()
 
-    def stop(self):
+    async def stop(self):
         """
         Stop the download or seeding process.
         """
@@ -105,7 +106,7 @@ class TorrentClient:
         for peer in self.peers:
             peer.stop()
         self.piece_manager.close()
-        self.tracker.close()
+        await self.tracker.close()
 
     def _on_block_retrieved(self, peer_id, piece_index, block_offset, data):
         """
